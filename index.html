@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Caveat:wght@500;600&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="fotos/favicon.png">
 <style>
 :root {
   --creme: #fbf3ea;
@@ -305,6 +306,7 @@ footer {
 .cal-escolha input:focus, .cal-escolha select:focus { outline: none; border-color: var(--vinho); }
 .cal-aviso { margin-top: 12px; font-size: 0.95rem; color: var(--vinho); font-weight: 700; min-height: 1.4em; }
 .cal-escolha .botao { margin-top: 4px; }
+.moldura img { object-position: center 30%; }
 </style>
 </head>
 <body>
@@ -334,8 +336,8 @@ footer {
   </div>
   <div class="banner-foto" aria-hidden="true">
     <div class="moldura">
-      <img id="foto-destaque" alt="" hidden>
-      <span class="moldura-vazio">foto de destaque<br>em breve</span>
+      <img id="foto-destaque" src="fotos/tati-avatar.jpg" alt="Desenho da Tati Barros sorrindo, de óculos e blusa rosa" width="900" height="900">
+      
     </div>
   </div>
 </section>
@@ -412,8 +414,7 @@ footer {
 
 <script>
 /* ============ PARA ATUALIZAR O SITE ============
-   1) Fotos: coloque o arquivo na pasta "fotos" e escreva o nome na lista abaixo.
-      A primeira da lista vira a foto grande do topo.
+   1) Fotos das unhas: coloque o arquivo na pasta "fotos" e escreva o nome na lista abaixo.
    2) WhatsApp: escreva o número com DDI e DDD, só números. Ex: "5511999998888".
       Enquanto estiver vazio, o botão de WhatsApp não aparece.
 */
@@ -442,10 +443,6 @@ const HORARIOS_OCUPADOS = {
 
 const galeria = document.getElementById("galeria");
 if (FOTOS.length) {
-  const destaque = document.getElementById("foto-destaque");
-  destaque.src = "fotos/" + FOTOS[0];
-  destaque.hidden = false;
-  document.querySelector(".moldura-vazio").hidden = true;
   FOTOS.forEach((f, i) => {
     const fig = document.createElement("figure");
     const img = document.createElement("img");
