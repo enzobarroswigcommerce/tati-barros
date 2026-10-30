@@ -318,6 +318,17 @@ footer {
 .pacotes { margin-top: 56px; }
 .pacotes h3 { font-family: "Fraunces", serif; font-weight: 600; font-size: clamp(1.8rem, 4vw, 2.4rem); line-height: 1; letter-spacing: -0.02em; color: var(--vinho); }
 .pacotes .nota { margin-top: 8px; margin-bottom: 8px; }
+
+/* agenda do Cal.com dentro do site */
+.abas { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.aba { font: inherit; font-weight: 700; font-size: 0.95rem; color: var(--vinho); background: transparent; border: 2px solid var(--vinho); border-radius: 999px; padding: 9px 16px; cursor: pointer; }
+.aba small { font-weight: 400; margin-left: 4px; opacity: 0.8; }
+.aba.on { background: var(--vinho); color: var(--creme); }
+.aba:hover:not(.on) { background: var(--blush); }
+.cal-frame { display: block; width: 100%; max-width: 920px; height: 720px; border: 2px solid var(--linha); border-radius: 18px; background: #fff; margin-top: 10px; }
+.cal-fallback { margin-top: 14px; font-size: 0.95rem; color: #6b4a50; }
+.cal-fallback a { color: var(--vinho); font-weight: 700; }
+@media (max-width: 760px) { .cal-frame { height: 780px; } }
 </style>
 </head>
 <body>
@@ -327,7 +338,7 @@ footer {
   <nav>
     <a href="#unhas">Unhas</a>
     <a href="#precos">Preços</a>
-    <a href="#agenda">Agenda</a>
+    <a href="#agenda">Agendar</a>
     <a href="#casa">Onde fico</a>
   </nav>
 </header>
@@ -378,29 +389,20 @@ footer {
 
 <section class="secao agenda" id="agenda">
   <div class="secao-cab">
-    <h2>Dias<br>livres</h2>
-    <p>Toque num dia livre para chamar a Tati e marcar o horário.</p>
+    <h2>Marque seu<br>horário</h2>
+    <p>Escolha o atendimento, o dia e o horário. O pedido chega para a Tati e entra na agenda dela.</p>
   </div>
-  <div class="cal">
-    <div class="cal-topo">
-      <button type="button" id="cal-ant" aria-label="Mês anterior">&larr;</button>
-      <strong id="cal-mes"></strong>
-      <button type="button" id="cal-prox" aria-label="Próximo mês">&rarr;</button>
-    </div>
-    <div class="cal-sem"><span>dom</span><span>seg</span><span>ter</span><span>qua</span><span>qui</span><span>sex</span><span>sáb</span></div>
-    <div class="cal-grade" id="cal-grade"></div>
-    <div class="cal-legenda">
-      <span><i class="liv"></i> livre</span>
-      <span><i class="ocu"></i> ocupado</span>
-    </div>
-    <div class="cal-escolha" id="cal-escolha">
-      <p id="cal-texto">1. Toque num dia livre no calendário.</p>
-      <label>2. Horário <select id="cal-hora"></select></label>
-      <label>3. Seu nome <input type="text" id="cal-nome" placeholder="Como posso te chamar?" autocomplete="given-name"></label>
-      <a class="botao" id="cal-zap" href="#" target="_blank" rel="noopener">Agendar</a>
-      <p class="cal-aviso" id="cal-aviso"></p>
-    </div>
+  <div class="abas" role="tablist" aria-label="Atendimento">
+    <button type="button" role="tab" class="aba on" data-ev="mao" aria-selected="true">Mão <small>R$ 30</small></button>
+    <button type="button" role="tab" class="aba" data-ev="pe" aria-selected="false">Pé <small>R$ 35</small></button>
+    <button type="button" role="tab" class="aba" data-ev="mao-e-pe" aria-selected="false">Mão e pé <small>R$ 60</small></button>
+    <button type="button" role="tab" class="aba" data-ev="pacote-mensal-4-maos" aria-selected="false">Pacote 4 mãos <small>R$ 100</small></button>
+    <button type="button" role="tab" class="aba" data-ev="pacote-mensal-4-maos-e-1-pe" aria-selected="false">Pacote 4 mãos e 1 pé <small>R$ 130</small></button>
+    <button type="button" role="tab" class="aba" data-ev="pacote-mensal-4-maos-e-2-pes" aria-selected="false">Pacote 4 mãos e 2 pés <small>R$ 150</small></button>
   </div>
+  <p class="nota" id="aba-nota" hidden>Pacote: atendimento só de terça a quinta-feira. Você marca o primeiro, e a Tati combina os outros.</p>
+  <iframe id="cal-frame" class="cal-frame" title="Agenda da Tati Barros" loading="lazy"></iframe>
+  <p class="cal-fallback">Não carregou? <a id="cal-abrir" target="_blank" rel="noopener" href="https://cal.com/tatiane-barros-01fljs">Abra a agenda em outra aba</a> ou <a id="cal-zap" target="_blank" rel="noopener" href="#">chame a Tati no WhatsApp</a>.</p>
 </section>
 
 <section class="secao casa" id="casa">
@@ -441,23 +443,6 @@ const FOTOS = [
 ];
 const WHATSAPP = "5519983375292";
 
-/* AGENDA
-   DIAS_QUE_ATENDO: 0=domingo, 1=segunda ... 6=sábado. Tire o número do dia que ela não atende.
-   DIAS_OCUPADOS: datas que já estão lotadas ou que ela não vai atender, no formato "AAAA-MM-DD".
-*/
-/* HORARIOS: horas que ela atende, que aparecem na hora de escolher. */
-const HORARIOS = ["09:00","10:00","11:00","13:00","14:00","15:00","16:00","17:00","18:00"];
-const DIAS_QUE_ATENDO = [1, 2, 3, 4, 5, 6];
-const DIAS_OCUPADOS = [
-  // "2026-11-05",
-  // "2026-11-12",
-];
-/* HORARIOS_OCUPADOS: dia livre, mas com algumas horas já tomadas. Ex: "2026-11-05": ["16:00"] */
-const HORARIOS_OCUPADOS = {
-  // "2026-11-05": ["16:00"],
-};
-/* =============================================== */
-
 const galeria = document.getElementById("galeria");
 if (FOTOS.length) {
   FOTOS.forEach((f, i) => {
@@ -486,92 +471,24 @@ if (WHATSAPP) {
 }
 
 /* agenda */
-(function () {
-  const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
-  const meses = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
-  const dias = ["domingo","segunda","terça","quarta","quinta","sexta","sábado"];
-  const limite = new Date(hoje.getFullYear(), hoje.getMonth() + 2, 1);
-  let ver = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-  const grade = document.getElementById("cal-grade");
-  const iso = d => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
-
-  const nome = document.getElementById("cal-nome");
-  const hora = document.getElementById("cal-hora");
-  const zap = document.getElementById("cal-zap");
-  const aviso = document.getElementById("cal-aviso");
-  const texto = document.getElementById("cal-texto");
-  let diaEscolhido = null;
-
-  function horas() {
-    const ocup = diaEscolhido ? (HORARIOS_OCUPADOS[iso(diaEscolhido)] || []) : [];
-    const atual = hora.value;
-    hora.innerHTML = "";
-    HORARIOS.forEach(x => {
-      const o = new Option(x.replace(":00", "h").replace(":", "h") + (ocup.includes(x) ? " (ocupado)" : ""), x);
-      o.disabled = ocup.includes(x);
-      hora.add(o);
-    });
-    const livre = x => HORARIOS.includes(x) && !ocup.includes(x);
-    hora.value = livre(atual) ? atual : (livre("16:00") ? "16:00" : HORARIOS.find(x => !ocup.includes(x)));
-  }
-
-  function montarLink() {
-    aviso.textContent = "";
-    if (!diaEscolhido || !nome.value.trim()) { zap.href = "#"; return; }
-    const d = diaEscolhido;
-    const dia = dias[d.getDay()] + ", " + d.getDate() + " de " + meses[d.getMonth()];
-    const h = hora.options[hora.selectedIndex].text;
-    zap.href = "https://wa.me/" + WHATSAPP + "?text=" +
-      encodeURIComponent("Oi Tati, aqui é a " + nome.value.trim() + ". Quero agendar para " + dia + ", às " + h + ".");
-  }
-  nome.oninput = montarLink; hora.onchange = montarLink;
-
-  zap.onclick = e => {
-    if (!diaEscolhido) { e.preventDefault(); aviso.textContent = "Falta escolher o dia no calendário."; return; }
-    if (!nome.value.trim()) { e.preventDefault(); aviso.textContent = "Falta escrever seu nome."; nome.focus(); return; }
-    aviso.textContent = "Pronto! Abrimos o WhatsApp com o seu pedido. A Tati confirma por lá.";
-  };
-
-  function escolher(d, btn) {
-    grade.querySelectorAll(".sel").forEach(x => x.classList.remove("sel"));
-    btn.classList.add("sel");
-    diaEscolhido = d;
-    texto.textContent = "1. Dia escolhido: " + dias[d.getDay()] + ", " + d.getDate() + " de " + meses[d.getMonth()] + ".";
-    horas();
-    montarLink();
-  }
-
-  function reset() {
-    diaEscolhido = null;
-    texto.textContent = "1. Toque num dia livre no calendário.";
-    horas();
-    montarLink();
-  }
-
-  function desenhar() {
-    document.getElementById("cal-mes").textContent = meses[ver.getMonth()] + " " + ver.getFullYear();
-    grade.innerHTML = "";
-    reset();
-    for (let i = 0; i < ver.getDay(); i++) grade.appendChild(document.createElement("span"));
-    const total = new Date(ver.getFullYear(), ver.getMonth() + 1, 0).getDate();
-    for (let n = 1; n <= total; n++) {
-      const d = new Date(ver.getFullYear(), ver.getMonth(), n);
-      const b = document.createElement("button");
-      b.type = "button"; b.textContent = n;
-      const atende = DIAS_QUE_ATENDO.includes(d.getDay());
-      if (d < hoje || !atende) { b.className = "off"; b.disabled = true; }
-      else if (DIAS_OCUPADOS.includes(iso(d))) { b.className = "ocupado"; b.disabled = true; b.title = "Ocupado"; }
-      else { b.className = "livre"; b.onclick = () => escolher(d, b); }
-      if (d.getTime() === hoje.getTime()) b.classList.add("hoje");
-      grade.appendChild(b);
-    }
-    document.getElementById("cal-ant").disabled = ver <= new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-    document.getElementById("cal-prox").disabled = new Date(ver.getFullYear(), ver.getMonth() + 1, 1) >= limite;
-  }
-  document.getElementById("cal-ant").onclick = () => { ver = new Date(ver.getFullYear(), ver.getMonth() - 1, 1); desenhar(); };
-  document.getElementById("cal-prox").onclick = () => { ver = new Date(ver.getFullYear(), ver.getMonth() + 1, 1); desenhar(); };
-  desenhar();
-})();
+const CAL = "https://cal.com/tatiane-barros-01fljs/";
+const frame = document.getElementById("cal-frame");
+const abrir = document.getElementById("cal-abrir");
+const nota = document.getElementById("aba-nota");
+function abrirEvento(ev) {
+  frame.src = CAL + ev + "?embed=true&theme=light&layout=month_view";
+  abrir.href = CAL + ev;
+  nota.hidden = ev.indexOf("pacote") !== 0;
+  document.querySelectorAll(".aba").forEach(b => {
+    const on = b.dataset.ev === ev;
+    b.classList.toggle("on", on);
+    b.setAttribute("aria-selected", on ? "true" : "false");
+  });
+}
+document.querySelectorAll(".aba").forEach(b => b.addEventListener("click", () => abrirEvento(b.dataset.ev)));
+abrirEvento("mao");
+document.getElementById("cal-zap").href = "https://wa.me/" + WHATSAPP + "?text=" +
+  encodeURIComponent("Oi Tati, queria marcar um horário!");
 </script>
 </body>
 </html>
