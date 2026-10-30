@@ -315,6 +315,9 @@ footer {
 }
 .topo { align-items: center; }
 .banner { grid-template-columns: 1fr; padding-top: 48px; padding-bottom: 96px; }
+.pacotes { margin-top: 56px; }
+.pacotes h3 { font-family: "Fraunces", serif; font-weight: 600; font-size: clamp(1.8rem, 4vw, 2.4rem); line-height: 1; letter-spacing: -0.02em; color: var(--vinho); }
+.pacotes .nota { margin-top: 8px; margin-bottom: 8px; }
 </style>
 </head>
 <body>
@@ -358,9 +361,19 @@ footer {
   </div>
   <ul class="lista-precos">
     <li><span class="item">Mão</span><span class="ponto"></span><span class="valor">R$ 30</span></li>
-    <li><span class="item">Pé</span><span class="ponto"></span><span class="valor">R$ 25</span></li>
-    <li class="combo"><span class="item">Mão e pé</span><span class="ponto"></span><span class="valor">R$ 50</span></li>
+    <li><span class="item">Pé</span><span class="ponto"></span><span class="valor">R$ 35</span></li>
+    <li class="combo"><span class="item">Mão e pé</span><span class="ponto"></span><span class="valor">R$ 60</span></li>
   </ul>
+
+  <div class="pacotes">
+    <h3>Pacote mensal</h3>
+    <p class="nota">Atendimento só de terça a quinta-feira.</p>
+    <ul class="lista-precos">
+      <li><span class="item">4 mãos</span><span class="ponto"></span><span class="valor">R$ 100</span></li>
+      <li><span class="item">4 mãos e 1 pé</span><span class="ponto"></span><span class="valor">R$ 130</span></li>
+      <li><span class="item">4 mãos e 2 pés</span><span class="ponto"></span><span class="valor">R$ 150</span></li>
+    </ul>
+  </div>
 </section>
 
 <section class="secao agenda" id="agenda">
